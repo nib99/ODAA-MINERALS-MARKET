@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>AI Mineral Identifier — MinDeb Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="min-h-screen">
+
+  <div id="toast-container"></div>
+
+  <header class="sticky top-0 z-50 bg-[var(--bg-secondary)]/90 backdrop-blur border-b divider">
+    <div class="max-w-3xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="w-9 h-9 rounded-lg gold-gradient flex items-center justify-center text-lg">⛏️</span>
+        <span class="font-heading font-extrabold text-lg gold-text" data-i18n="app_name">MinDeb Marketplace</span>
+      </a>
+      <a href="index.html" class="btn btn-ghost">← <span data-i18n="nav_home">Home</span></a>
+    </div>
+  </header>
+
+  <main class="max-w-3xl mx-auto px-4 sm:px-6 py-10">
+    <h1 class="font-heading text-3xl font-extrabold mb-1">🤖 <span data-i18n="ai_title">AI Mineral Identifier</span></h1>
+    <p class="text-[var(--text-secondary)] mb-8" data-i18n="ai_subtitle">Upload photos or video of your mineral and get an instant AI-powered analysis</p>
+
+    <!-- ============ STAGE: INTRO / EXAMPLES ============ -->
+    <div id="ai-stage-intro">
+      <div class="card p-6 sm:p-8 mb-6">
+        <h2 class="font-heading text-xl font-bold mb-4" data-i18n="ai_examples_title">How It Works</h2>
+        <div class="space-y-4">
+          <div class="flex items-start gap-3">
+            <span class="step-circle active shrink-0">1</span>
+            <p class="pt-1" data-i18n="ai_example_1">Take clear photos of the mineral from multiple angles</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="step-circle shrink-0">2</span>
+            <p class="pt-1" data-i18n="ai_example_2">Pay the small identification fee</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="step-circle shrink-0">3</span>
+            <p class="pt-1" data-i18n="ai_example_3">Upload your images and video for analysis</p>
+          </div>
+          <div class="flex items-start gap-3">
+            <span class="step-circle shrink-0">4</span>
+            <p class="pt-1" data-i18n="ai_example_4">Receive your AI-generated mineral report</p>
+          </div>
+        </div>
+      </div>
+
+      <div class="card p-6 sm:p-8">
+        <h2 class="font-heading text-xl font-bold mb-1" data-i18n="ai_fee_title">Identification Fee</h2>
+        <p class="text-sm text-[var(--text-secondary)] mb-6" data-i18n="ai_fee_desc">A small fee is required to process your AI mineral identification request.</p>
+        <div class="flex items-center justify-between bg-[var(--bg-secondary)] rounded-lg px-4 py-3 mb-6">
+          <span class="text-sm text-[var(--text-secondary)]">Fee</span>
+          <span class="font-heading font-bold text-xl text-[var(--gold-light)]">150 ETB</span>
+        </div>
+
+        <form id="ai-pay-form" class="space-y-6" novalidate>
+          <div>
+            <label class="field-label" data-i18n="choose_payment_method">Choose Payment Method</label>
+            <div id="ai-payment-methods" class="grid grid-cols-2 sm:grid-cols-3 gap-3"></div>
+          </div>
+          <div>
+            <label class="field-label" for="ai-transaction-id" data-i18n="transaction_id">Transaction ID</label>
+            <input id="ai-transaction-id" type="text" class="input" required />
+          </div>
+          <div>
+            <label class="field-label" data-i18n="upload_receipt">Upload Payment Receipt</label>
+            <button type="button" id="ai-upload-receipt-btn" class="btn btn-outline w-full border-dashed py-6">
+              🧾 <span data-i18n="drag_drop_images">Click to upload or drag images here</span>
+            </button>
+            <div id="ai-receipt-preview" class="mt-3"></div>
+          </div>
+          <button type="submit" id="ai-submit-payment-btn" class="btn btn-primary w-full py-3" data-i18n="pay_and_continue">Pay & Continue</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ============ STAGE: PENDING REVIEW ============ -->
+    <div id="ai-stage-pending" class="hidden card p-8 text-center">
+      <div class="text-5xl mb-4">⏳</div>
+      <h2 class="font-heading text-xl font-bold text-[var(--warning)] mb-2" data-i18n="payment_pending">Payment Under Review</h2>
+      <p class="text-[var(--text-secondary)] max-w-sm mx-auto" data-i18n="payment_pending_sub">Your payment is being reviewed by our admin team. This usually takes a few hours.</p>
+    </div>
+
+    <!-- ============ STAGE: UPLOAD FOR ANALYSIS ============ -->
+    <div id="ai-stage-upload" class="hidden card p-6 sm:p-8">
+      <h2 class="font-heading text-xl font-bold mb-1">✅ <span data-i18n="payment_approved">Payment Approved!</span></h2>
+      <p class="text-sm text-[var(--text-secondary)] mb-6" data-i18n="ai_subtitle">Upload photos or video of your mineral and get an instant AI-powered analysis</p>
+
+      <form id="ai-upload-form" class="space-y-6" novalidate>
+        <div>
+          <div class="flex items-center justify-between mb-2">
+            <label class="field-label mb-0" data-i18n="upload_images">Upload Images</label>
+          </div>
+          <button type="button" id="ai-upload-images-btn" class="btn btn-outline w-full border-dashed py-6">
+            📷 <span data-i18n="drag_drop_images">Click to upload or drag images here</span>
+          </button>
+          <div id="ai-image-previews" class="grid grid-cols-3 sm:grid-cols-4 gap-3 mt-3"></div>
+        </div>
+
+        <div>
+          <label class="field-label" data-i18n="upload_video">Upload Video (max 65 seconds)</label>
+          <button type="button" id="ai-upload-video-btn" class="btn btn-outline w-full border-dashed py-6">
+            🎥 <span data-i18n="drag_drop_images">Click to upload or drag images here</span>
+          </button>
+          <div id="ai-video-preview" class="mt-3"></div>
+        </div>
+
+        <div>
+          <label class="field-label" for="ai-observation-notes" data-i18n="description">Description</label>
+          <textarea id="ai-observation-notes" rows="3" class="input" placeholder="Color, texture, luster, where it was found..."></textarea>
+        </div>
+
+        <button type="submit" id="ai-submit-analysis-btn" class="btn btn-emerald w-full py-3" data-i18n="submit_for_analysis">Submit for AI Analysis</button>
+      </form>
+    </div>
+
+    <!-- ============ STAGE: REPORT ============ -->
+    <div id="ai-stage-report" class="hidden card p-6 sm:p-8">
+      <h2 class="font-heading text-xl font-bold mb-4">📊 <span data-i18n="ai_report_title">AI Mineral Report</span></h2>
+      <div id="ai-report-content"></div>
+      <a href="index.html" class="btn btn-outline w-full mt-6" data-i18n="close">Close</a>
+    </div>
+  </main>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/cloudinary-config.js"></script>
+  <script src="https://widget.cloudinary.com/v2.0/global/all.js" type="text/javascript"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/ai-identifier.js"></script>
+</body>
+</html>

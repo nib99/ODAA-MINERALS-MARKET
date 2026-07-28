@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Admin Dashboard — MinDeb Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="min-h-screen">
+
+  <div id="toast-container"></div>
+
+  <header class="sticky top-0 z-50 bg-[var(--bg-secondary)]/90 backdrop-blur border-b divider">
+    <div class="max-w-6xl mx-auto px-4 sm:px-6 py-3 flex items-center justify-between">
+      <a href="index.html" class="flex items-center gap-2">
+        <span class="w-9 h-9 rounded-lg gold-gradient flex items-center justify-center text-lg">⛏️</span>
+        <span class="font-heading font-extrabold text-lg gold-text" data-i18n="app_name">MinDeb Marketplace</span>
+      </a>
+      <a href="index.html" class="btn btn-ghost">← <span data-i18n="nav_home">Home</span></a>
+    </div>
+  </header>
+
+  <main class="max-w-6xl mx-auto px-4 sm:px-6 py-10">
+    <h1 class="font-heading text-3xl font-extrabold mb-1" data-i18n="admin_dashboard">Admin Dashboard</h1>
+    <p class="text-[var(--text-secondary)] mb-8" data-i18n="admin_subtitle">Manage payments, users, and listings</p>
+
+    <!-- Stats -->
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
+      <div class="card p-5">
+        <p class="text-xs text-[var(--text-muted)] mb-1" data-i18n="total_listings">Total Listings</p>
+        <p id="stat-listings" class="font-heading text-3xl font-bold text-[var(--gold-light)]">–</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs text-[var(--text-muted)] mb-1" data-i18n="total_users">Total Users</p>
+        <p id="stat-users" class="font-heading text-3xl font-bold text-[var(--emerald-light)]">–</p>
+      </div>
+      <div class="card p-5">
+        <p class="text-xs text-[var(--text-muted)] mb-1" data-i18n="total_pending">Pending Reviews</p>
+        <p id="stat-pending" class="font-heading text-3xl font-bold text-[var(--warning)]">–</p>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex flex-wrap gap-2 mb-6 card p-2 w-fit">
+      <button class="tab-btn active" data-tab="payments" data-i18n="pending_payments">Pending Payments</button>
+      <button class="tab-btn" data-tab="listings" data-i18n="all_listings">All Listings</button>
+      <button class="tab-btn" data-tab="users" data-i18n="all_users">All Users</button>
+      <button class="tab-btn" data-tab="ai" data-i18n="ai_requests">AI Identification Requests</button>
+    </div>
+
+    <!-- Panels -->
+    <div id="panel-payments" class="tab-panel card p-6">
+      <div id="payments-list"></div>
+    </div>
+
+    <div id="panel-listings" class="tab-panel hidden card p-6">
+      <div id="listings-admin-list" class="space-y-3"></div>
+    </div>
+
+    <div id="panel-users" class="tab-panel hidden card p-6">
+      <div id="users-admin-list"></div>
+    </div>
+
+    <div id="panel-ai" class="tab-panel hidden card p-6">
+      <div id="ai-admin-list" class="space-y-3"></div>
+    </div>
+  </main>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script src="js/admin.js"></script>
+</body>
+</html>

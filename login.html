@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Login — MinDeb Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-10">
+
+  <div id="toast-container"></div>
+
+  <div class="w-full max-w-md">
+    <a href="index.html" class="flex items-center justify-center gap-2 mb-8">
+      <span class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center text-xl">⛏️</span>
+      <span class="font-heading font-extrabold text-xl gold-text" data-i18n="app_name">MinDeb Marketplace</span>
+    </a>
+
+    <div class="card p-8">
+      <h1 class="font-heading text-2xl font-bold mb-1" data-i18n="login_title">Welcome Back</h1>
+      <p class="text-sm text-[var(--text-secondary)] mb-6" data-i18n="login_subtitle">Login to access your MinDeb account</p>
+
+      <form id="login-form" class="space-y-4" novalidate>
+        <div>
+          <label class="field-label" for="login-email" data-i18n="email">Email Address</label>
+          <input id="login-email" type="email" class="input" required autocomplete="email" />
+        </div>
+        <div>
+          <label class="field-label" for="login-password" data-i18n="password">Password</label>
+          <input id="login-password" type="password" class="input" required autocomplete="current-password" />
+        </div>
+        <button type="submit" id="login-btn" class="btn btn-primary w-full" data-i18n="submit_login">Login</button>
+      </form>
+
+      <p class="text-center text-sm text-[var(--text-secondary)] mt-6">
+        <span data-i18n="no_account">Don't have an account?</span>
+        <a href="register.html" class="text-[var(--gold-light)] font-semibold" data-i18n="sign_up_here">Sign up here</a>
+      </p>
+    </div>
+  </div>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    (function () {
+      const form = document.getElementById("login-form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const emailInput = document.getElementById("login-email");
+        const passwordInput = document.getElementById("login-password");
+        const btn = document.getElementById("login-btn");
+
+        let valid = true;
+        if (!utils.isValidEmail(emailInput.value.trim())) {
+          utils.showFieldError(emailInput, i18n.t("invalid_email"));
+          valid = false;
+        } else {
+          utils.clearFieldError(emailInput);
+        }
+        if (!passwordInput.value) {
+          utils.showFieldError(passwordInput, i18n.t("required_field"));
+          valid = false;
+        } else {
+          utils.clearFieldError(passwordInput);
+        }
+        if (!valid) return;
+
+        utils.setLoading(btn, true, i18n.t("logging_in"));
+        try {
+          await authModule.login({ email: emailInput.value.trim(), password: passwordInput.value });
+          utils.toast(i18n.t("success_login"), "success");
+          const redirect = utils.qs("redirect");
+          setTimeout(() => { window.location.href = redirect || "index.html"; }, 700);
+        } catch (err) {
+          utils.toast(authModule.friendlyError(err), "error");
+        } finally {
+          utils.setLoading(btn, false);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

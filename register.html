@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Register — MinDeb Marketplace</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="stylesheet" href="css/styles.css" />
+</head>
+<body class="min-h-screen flex items-center justify-center px-4 py-10">
+
+  <div id="toast-container"></div>
+
+  <div class="w-full max-w-md">
+    <a href="index.html" class="flex items-center justify-center gap-2 mb-8">
+      <span class="w-10 h-10 rounded-lg gold-gradient flex items-center justify-center text-xl">⛏️</span>
+      <span class="font-heading font-extrabold text-xl gold-text" data-i18n="app_name">MinDeb Marketplace</span>
+    </a>
+
+    <div class="card p-8">
+      <h1 class="font-heading text-2xl font-bold mb-1" data-i18n="register_title">Create Your Account</h1>
+      <p class="text-sm text-[var(--text-secondary)] mb-6" data-i18n="register_subtitle">Join Ethiopia's mineral trading network</p>
+
+      <form id="register-form" class="space-y-4" novalidate>
+        <div>
+          <label class="field-label" for="reg-name" data-i18n="full_name">Full Name</label>
+          <input id="reg-name" type="text" class="input" required autocomplete="name" />
+        </div>
+        <div>
+          <label class="field-label" for="reg-email" data-i18n="email">Email Address</label>
+          <input id="reg-email" type="email" class="input" required autocomplete="email" />
+        </div>
+        <div>
+          <label class="field-label" for="reg-phone" data-i18n="phone_number">Phone Number</label>
+          <input id="reg-phone" type="tel" class="input" placeholder="+251 9XX XXX XXX" />
+        </div>
+        <div>
+          <label class="field-label" data-i18n="role">I am a</label>
+          <div class="grid grid-cols-2 gap-2">
+            <button type="button" data-role="buyer" class="role-btn btn btn-outline justify-center" onclick="selectRole('buyer')">
+              🛒 <span data-i18n="role_buyer">Buyer</span>
+            </button>
+            <button type="button" data-role="seller" class="role-btn btn btn-outline justify-center" onclick="selectRole('seller')">
+              📦 <span data-i18n="role_seller">Seller</span>
+            </button>
+          </div>
+          <input type="hidden" id="reg-role" value="buyer" />
+        </div>
+        <div>
+          <label class="field-label" for="reg-password" data-i18n="password">Password</label>
+          <input id="reg-password" type="password" class="input" required autocomplete="new-password" />
+        </div>
+        <div>
+          <label class="field-label" for="reg-confirm-password" data-i18n="confirm_password">Confirm Password</label>
+          <input id="reg-confirm-password" type="password" class="input" required autocomplete="new-password" />
+        </div>
+        <button type="submit" id="register-btn" class="btn btn-primary w-full" data-i18n="submit_register">Create Account</button>
+      </form>
+
+      <p class="text-center text-sm text-[var(--text-secondary)] mt-6">
+        <span data-i18n="have_account">Already have an account?</span>
+        <a href="login.html" class="text-[var(--gold-light)] font-semibold" data-i18n="login_here">Login here</a>
+      </p>
+    </div>
+  </div>
+
+  <script type="module" src="js/firebase-config.js"></script>
+  <script src="js/translations.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/auth.js"></script>
+  <script>
+    function selectRole(role) {
+      document.getElementById("reg-role").value = role;
+      document.querySelectorAll(".role-btn").forEach((btn) => {
+        const active = btn.dataset.role === role;
+        btn.classList.toggle("btn-primary", active);
+        btn.classList.toggle("btn-outline", !active);
+      });
+    }
+    selectRole("buyer");
+
+    (function () {
+      const form = document.getElementById("register-form");
+      form.addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const nameInput = document.getElementById("reg-name");
+        const emailInput = document.getElementById("reg-email");
+        const phoneInput = document.getElementById("reg-phone");
+        const passwordInput = document.getElementById("reg-password");
+        const confirmInput = document.getElementById("reg-confirm-password");
+        const role = document.getElementById("reg-role").value;
+        const btn = document.getElementById("register-btn");
+
+        let valid = true;
+        if (!nameInput.value.trim()) { utils.showFieldError(nameInput, i18n.t("required_field")); valid = false; } else utils.clearFieldError(nameInput);
+        if (!utils.isValidEmail(emailInput.value.trim())) { utils.showFieldError(emailInput, i18n.t("invalid_email")); valid = false; } else utils.clearFieldError(emailInput);
+        if (passwordInput.value.length < 6) { utils.showFieldError(passwordInput, i18n.t("password_too_short")); valid = false; } else utils.clearFieldError(passwordInput);
+        if (confirmInput.value !== passwordInput.value) { utils.showFieldError(confirmInput, i18n.t("passwords_no_match")); valid = false; } else utils.clearFieldError(confirmInput);
+        if (!valid) return;
+
+        utils.setLoading(btn, true, i18n.t("registering"));
+        try {
+          await authModule.register({
+            name: nameInput.value.trim(),
+            email: emailInput.value.trim(),
+            password: passwordInput.value,
+            phone: phoneInput.value.trim(),
+            role,
+          });
+          utils.toast(i18n.t("success_registered"), "success");
+          setTimeout(() => { window.location.href = "index.html"; }, 700);
+        } catch (err) {
+          utils.toast(authModule.friendlyError(err), "error");
+        } finally {
+          utils.setLoading(btn, false);
+        }
+      });
+    })();
+  </script>
+</body>
+</html>
